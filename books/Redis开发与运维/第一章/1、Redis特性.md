@@ -4,7 +4,10 @@
     3. Redis使用了单线程架构，预防了多线程可能产生的竞争问题
     4. Redis是少有的及性能和优雅于一身的开源代码
 # 基于减值对的数据结构服务器
-    1.Redis全称REmote Dictionaty Server，主要提供5种数据结构：字符串、哈希、列表、集合、有序集合，同时在字符串的基础上演变出了位图（Bigmaps）和HyperLoglog两种神奇的“数据结构”，并且随着LBS（Location Based Service，基于位置服务）的不断发展，Redis中加入有关GEO（地理信息位置）的功能
+    1.Redis全称REmote Dictionaty Server，主要提供5种数据结构：字符串、哈希、列表、集合、有
+    序集合，同时在字符串的基础上演变出了位图（Bigmaps）和HyperLoglog两种神奇的“数据结构”，并
+    且随着LBS（Location Based Service，基于位置服务）的不断发展，Redis中加入有关GEO（地理
+    信息位置）的功能
 # 丰富的功能
     1. 提供了键过期功能，可以用来实现缓存
     2. 提供了发布订阅功能，可以用来实现消息系统
@@ -22,4 +25,6 @@
 # 主从复制
     1. Redis提供了复制功能，实现了多个相同数据的Redis副本，复制功能是分布式Redis的基础
 # 高可用和分布式
-    1. Redis提供了高可用实现Redis Sentinel，它能将保证Redis节点的故障发现和故障自动转移。Redis从3.0版本正式提供了分布式实现Redis Cluster，他是Redis真正的分布是实现，提供了高可用、读写和容量的扩展性
+    1. Redis提供了高可用实现Redis Sentinel，它能将保证Redis节点的故障发现和故障自动转移。
+    Redis从3.0版本正式提供了分布式实现Redis Cluster，他是Redis真正的分布是实现，提供了高可
+    用、读写和容量的扩展性

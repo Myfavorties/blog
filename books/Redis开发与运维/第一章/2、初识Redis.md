@@ -54,12 +54,12 @@
     本为例：
     
     ```
-        $ wget http://download.redis.io/releases/redis-3.0.7.tar.gz
-        $ tar xzf redis-3.0.7.tar.gz
-        $ ln -s redis-3.0.7 redis
-        $ cd redis
-        $ make 
-        $ make install
+    $ wget http://download.redis.io/releases/redis-3.0.7.tar.gz
+    $ tar xzf redis-3.0.7.tar.gz
+    $ ln -s redis-3.0.7 redis
+    $ cd redis
+    $ make 
+    $ make install
     ```
     - 1） 下载Redis指定版本的源码压缩包到当前目录。
     - 2） 解压缩Redis源码压缩包。
@@ -78,7 +78,7 @@
     GitHub上维护了一个Redis的分支：
     https://gihub.com/MSOpenTech/redis
 
-3. 配置、启动、操作、关闭Redis
+3. Redis可执行文件说明
 
     可执行文件|作用
     -|-
@@ -89,4 +89,104 @@
     redis-check-dump|Redis RDB持久化文件检测和修复工具
     redis-sentinel|启动Redis Sentinel
 
+4. 配置、启动、操作、关闭Redis
 
+    1. 默认配置
+
+        `$ redis-server`
+
+        redis-server启动Redis后，会打印出一些日志，通过日志可以看到一些
+        信息：
+
+        - 当前Redis版本： 3.0.7
+        - Redis的默认端口： 6379
+        - Redis建议要使用配置文件来启动。
+
+    2. 运行启动
+        redis-server加上要修改配置名和值（可以使多对），没有设置的配置将使用默认配置：
+
+        `# redis-server --configKey1 configValue1 --configKey2 configValue2`
+
+        例如，如果要用6380作为端口启动Redis，那么可以执行：
+
+        `# redis-server --port 6380`
+
+        虽然运行配置可以自定义配置，但是如果需要修改的配置较多或者希望将
+        配置保存到文件中，不建议使用这种方式。
+
+    3. 配置文件启动
+
+        将配置写到指定文件里，例如我们将配置写到了/opt/redis/redis.conf
+        中，那么只需要执行如下命令即可启动Redis：
+
+        `# redis-server /opt/redis/redis.conf`
+
+5. Redis的基础配置
+
+    配置名|配置说明
+    -|-
+    port|端口
+    logfile|日志文件
+    dir|Redis工作目录（存放持久化文件和日志文件）
+    daemonize|是否已守护线程的方式启动Redis
+
+6. Redis命令行客户端
+
+    redis-cli可以使用两种方式连接Redis服务器
+
+    - 交互式方式：通过redis-cli -h {host} -p {port}的方式连接到Redis服
+    务，之后所有的操作都是通过交互的方式实现，不需要在执行redis-cli了，例
+    如：
+    ```
+    redis-cli -h 127.0.0.1- p 6379
+    127.0.0.1:6379> set hello world
+    OK
+    127.0.0.1:6379> get hello
+    "world"
+    ```
+
+    - 命令方式：用redis-cli -h {host} -p {port} {command} 就可以直接得
+    到命令的返回结果你，例如：
+
+    ```
+    redis-cli -h 127.0.0.1 -p 6379 get hello
+    "world"
+    ```
+
+    这里有两点要注意：1）如果没有-h参数，那么默认连接127.0.0.1；如果没有
+    -p，那么默认6379端口，也即是说如果-h -p都没写就是连接127.0.0.1:6379
+    这个Redis实例。2）redis-cli是学习Redis的重要工具
+
+7. 停止Redis服务
+
+    Redis提供了shutdown命令来停止Redis服务，例如要停掉127.0.0.1上6379端
+    口上的Redis服务，可以执行如下操作。
+
+    `$ redis-cli shutdown`
+
+    可以见到Redis的日志输出如下：
+    ```
+    # User requested shutdown...    #客户端发出的shutdown命令
+    * Saving the final RDB snapshot before exiting.
+    # 保存RDB持久化文件（RDB是Redis的一种持久化方式）
+    * DB saved on disk              #将RDB文件保存在磁盘上
+    # Redis is now ready to exit, bye bye...    #关闭
+    ```
+
+    当使用redis-cli再次连接该Redis服务时，看到Redis已经 “失联”。
+
+    ```
+    $ redis-cli
+    Could not connect to Redis at 127.0.0.1:6379: Connection refused
+    ```
+
+    这里有三点需要注意一下：
+
+    - Redis关闭的过程：断开与客户端的连接、持久化文件生成，是一种相对优雅
+    的关闭方式。
+    - 除了可以通过shutdown命令关闭Redis服务以外，还可以通过kill进程号的
+    方式关闭掉Redis，但是不要粗暴的使用kill -9强制杀死Redis进程，不但不
+    会做持久化操作，还会造成缓冲区等资源不能被优雅关闭，极端情况会造成AOF
+    和复制丢失数据的情况。
+    - shutdown还有一个参数，代表是否在关闭Redis前，生成持久化文件：
+    `redis-cli shutdown nosave|save`
